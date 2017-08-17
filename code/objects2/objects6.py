@@ -1,4 +1,4 @@
-FACES = range(2, 11) + ['Jack', 'Queen', 'King', 'Ace' ]
+FACES = list(range(2, 11)) + ['Jack', 'Queen', 'King', 'Ace' ]
 SUITS = [ 'Clubs', 'Diamonds', 'Hearts', 'Spades' ]
 
 class Card(object):

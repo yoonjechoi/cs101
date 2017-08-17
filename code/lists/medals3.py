@@ -27,11 +27,11 @@ medals = [ ( 'Australia', 2, 1, 0 ),
 
 def print_totals():
   for country, g, s, b in medals:
-    print country + ":", g + s + b
+    print(country + ":", g + s + b)
 
 def print_totals2():
   for item in medals:
-    print item[0] + ":", sum(item[1:])
+    print(item[0] + ":", sum(item[1:]))
 
 def compare(item1, item2):
   medals1 = sum(item1[1:])
@@ -42,7 +42,7 @@ def top_ten():
   medals.sort(compare)
   top_ten = medals[:10]
   for item in top_ten:
-    print item[0] + ":", sum(item[1:])
+    print(item[0] + ":", sum(item[1:]))
 
 def histogram():
   t = [0] * 13
@@ -50,6 +50,6 @@ def histogram():
     total = sum(item[1:])
     t[total / 3] += 1
   for i in range(13):
-    print str(3*i) + "~" + str(3*i+2) + ":\t" + ("*" * t[i])
+    print(str(3*i) + "~" + str(3*i+2) + ":\t" + ("*" * t[i]))
 
 histogram()

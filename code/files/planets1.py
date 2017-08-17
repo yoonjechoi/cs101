@@ -6,4 +6,4 @@ for line in f:
   planets.append(line.strip())
 f.close()  
 
-print planets
+print(planets)

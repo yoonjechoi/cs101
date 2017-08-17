@@ -7,7 +7,7 @@ import time
 import sys
 from cs1graphics import *
 
-FACES = range(2, 11) + ['Jack', 'Queen', 'King', 'Ace' ]
+FACES = list(range(2, 11)) + ['Jack', 'Queen', 'King', 'Ace' ]
 SUITS = [ 'Clubs', 'Diamonds', 'Hearts', 'Spades' ]
 CARD_SIZE = (40, 80)
 RADIUS = 3

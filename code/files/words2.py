@@ -7,5 +7,5 @@ for line in f:
   if not "e" in word:
     count += 1
 
-print "%d words have no 'e'" % count
+print("%d words have no 'e'" % count)
 f.close()

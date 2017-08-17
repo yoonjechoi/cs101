@@ -3,7 +3,7 @@
 #
 
 # We have data from 1994 to 2009
-years = range(1994, 2010)
+years = list(range(1994, 2010))
 
 # read one year into list data
 def read_year(yr, data):
@@ -59,10 +59,10 @@ def find_max(data):
 
 def main():
   data = read_all()
-  print "Minimum:", find_min(data)
-  print "Maximum:", find_max(data)
+  print("Minimum:", find_min(data))
+  print("Maximum:", find_max(data))
   for yr in years:
     avg = average(data, yr)
-    print yr, avg
+    print(yr, avg)
 
 main()

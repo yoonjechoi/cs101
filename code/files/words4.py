@@ -13,6 +13,6 @@ f = open("data/words.txt", "r")
 for line in f:
   word = line.strip()
   if three_doubles(word):
-    print word
+    print(word)
 
 f.close()

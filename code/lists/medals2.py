@@ -29,5 +29,5 @@ only_bronze = no_medals(countries, gold, silver)
 
 only_one = only_gold + only_silver + only_bronze
 
-print only_one
+print(only_one)
 

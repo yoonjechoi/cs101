@@ -1,7 +1,7 @@
 import math
 
 def sieve(n):
-  t = range(3, n, 2)
+  t = list(range(3, n, 2))
   sqrtn = int(math.sqrt(n))
   i = 0
   while t[i] <= sqrtn:
@@ -13,4 +13,4 @@ def sieve(n):
     i += 1
   return t
 
-print sieve(1000)
+print(sieve(1000))

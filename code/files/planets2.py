@@ -8,4 +8,4 @@ for line in f:
   if planet == "earth":
     earth = current
 
-print "Earth is planet #%d" % earth
+print("Earth is planet #%d" % earth)

@@ -1,4 +1,4 @@
-FACES = range(2, 11) + ['Jack', 'Queen', 'King', 'Ace' ]
+FACES = list(range(2, 11)) + ['Jack', 'Queen', 'King', 'Ace' ]
 SUITS = [ 'Clubs', 'Diamonds', 'Hearts', 'Spades' ]
 
 class Card(object):
@@ -34,6 +34,6 @@ hand = [ Card("Ace", "Spades"),
          Card(10, "Clubs") ]
 
 for card in hand:
-  print card, "has value", card.value()
+  print(card, "has value", card.value())
 
-print "Hand has value", hand_value(hand)
+print("Hand has value", hand_value(hand))

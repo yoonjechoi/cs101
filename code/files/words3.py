@@ -11,8 +11,8 @@ count = 0
 for line in f:
   word = line.strip()
   if is_abecedarian(word):
-    print word
+    print(word)
     count += 1
 
-print "%d words are abecedarian" % count
+print("%d words are abecedarian" % count)
 f.close()

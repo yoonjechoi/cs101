@@ -40,23 +40,23 @@ import os as _os
 import sys as _sys
 import traceback as _traceback
 from array import array as _array
-import cStringIO as _cStringIO
+import io as _cStringIO
 import base64 as _base64
 
 # change in module names for Python 2 vs 3
 try:
-    import Queue as _Queue
+    import queue as _Queue
 except ImportError:
     import queue as _Queue     # Python 3
 
 
 try:    
-    import thread as _thread
+    import _thread as _thread
 except ImportError:
     import _thread as _thread  # Python 3
 
 try:    
-    import Tkinter as _Tkinter
+    import tkinter as _Tkinter
 except ImportError:
     try:
         import tkinter as _Tkinter # Python 3
@@ -80,9 +80,9 @@ _ourRandom.seed(1234)     # initialize the random seed so that behaviors are rep
 # support for Python 2.x/3.x.
 # We want to use isinstance(foo, basestring) in either case
 try:
-    unicode
+    str
 except NameError:
-    basestring = unicode = str
+    str = str = str
 
 
 # Global Configuration Controls
@@ -300,7 +300,7 @@ class _OrderedMap:
     walk = self.first()
     while walk is not None:
       yield (walk.key(), walk.value())
-      walk = walk.next()
+      walk = next(walk)
 
   def closestBefore(self, key, strict=True):
     """Return iterator to position at or before the key.
@@ -581,7 +581,7 @@ class _OrderedMap:
       else:
         return None
 
-    def next(self):
+    def __next__(self):
       """Return iterator to the next element of the map.
          Return None if there is no successor."""
       other = self._nd.successor()
@@ -654,7 +654,7 @@ class _Hierarchy:
         """For when we know the child, but not the child's appropriate "class" tag
            (because _draw was not necessarily from that class)
         """
-        for k in self._relationships[parentTuple][1].keys():
+        for k in list(self._relationships[parentTuple][1].keys()):
             if k[0] == child:
                 return k
 
@@ -671,7 +671,7 @@ class _Hierarchy:
         # remove association from self._relationships
         entry = self._relationships.pop(objTuple)
         children = entry[1]
-        for c in children.keys():
+        for c in list(children.keys()):
             childsParents = self._relationships[c][0]
             childsParents.remove(objTuple)
             if not childsParents:    # no more parents
@@ -697,9 +697,9 @@ class _Hierarchy:
             self._computeUpwardChainsRecurse(results,t,counts)
             
         if _debug >= 2:
-            print('ComputeUpwardChains('+str(drawable)+','+str(counts)+') returning:')
+            print(('ComputeUpwardChains('+str(drawable)+','+str(counts)+') returning:'))
             for c in results:
-                print('    '+str(tuple(c)))
+                print(('    '+str(tuple(c))))
 
         return results
 
@@ -731,9 +731,9 @@ class _Hierarchy:
         results = []
         self._computeDownwardChainsRecurse(results, drawTuple, {})
         if _debug >= 2:
-            print('ComputeDownwardChains('+str(drawTuple)+') returning:')
+            print(('ComputeDownwardChains('+str(drawTuple)+') returning:'))
             for c in results:
-                print('    '+str(tuple(c)))
+                print(('    '+str(tuple(c))))
         return results
 
     def _computeDownwardChainsRecurse(self, results, drawTuple, count):
@@ -756,7 +756,7 @@ class _Hierarchy:
         prevCount = count.get(drawTuple, 0)
         count[drawTuple] = 1 + prevCount
         results.append( ([drawTuple], dict(count)) )
-        for child in self._relationships[drawTuple][1].keys():
+        for child in list(self._relationships[drawTuple][1].keys()):
             if count.get(child, 0) < _RECURSIVE_LIMIT:
                 oldSize = len(results)
                 self._computeDownwardChainsRecurse(results, child, count)
@@ -838,7 +838,7 @@ class _RenderedHierarchy:
             
             if n._renderedDrawable is not None:
                 deleted.append(n._renderedDrawable)
-            queue.extend(n._children.values())
+            queue.extend(list(n._children.values()))
         
         return deleted
     
@@ -880,12 +880,12 @@ class _RenderedHierarchy:
     def changeDepth(self, chain, newDepth):
         node = self._nodeLookup[chain]
         oldDepth = node._depth
-        if _debug >= 1.5:  print('change depth of ' + str(chain) + ' from ' + str(oldDepth) + ' to ' + str(newDepth))
+        if _debug >= 1.5:  print(('change depth of ' + str(chain) + ' from ' + str(oldDepth) + ' to ' + str(newDepth)))
         node._depth = newDepth
         parent = node._parent
         handle = parent._sortedChildren.find(oldDepth)
         prevSib = handle.prev()
-        nextSib = handle.next()
+        nextSib = next(handle)
         del parent._sortedChildren[oldDepth]
         parent._sortedChildren[newDepth] = node
         if (prevSib is not None and newDepth < prevSib.key()) or \
@@ -893,7 +893,7 @@ class _RenderedHierarchy:
             # must re-thread relative to siblings
             if _debug >= 2.5:
                 for (k,v) in iter(parent._sortedChildren):
-                    print( '  child: ' + str(k) + ' ' + str(v))
+                    print(( '  child: ' + str(k) + ' ' + str(v)))
             self._removeThreads(node, parent)   # detach from old location
             self._addThreads(node, parent)      # reattach in new location
             return (self.first(node), self.last(node)) # Return range of things that need to be changed
@@ -910,7 +910,7 @@ class _RenderedHierarchy:
         while len(toFix) > 0:
             n = toFix.pop()
             n._cumulativeTransformation = n._parent._cumulativeTransformation * n._transformation
-            toFix.extend(n._children.values())
+            toFix.extend(list(n._children.values()))
             
         return (self.first(node), self.last(node))    # Return range of things that need to be changed
 
@@ -1069,11 +1069,11 @@ class _UpdateManager:
             # those events should cause changes to the state of the
             # public branch.
             if _debug >= 2:
-                print("Within _resolveMirror on node " + str(self))
+                print(("Within _resolveMirror on node " + str(self)))
             
             for (chain, child) in list(privateMap):
                 if _debug >= 3:
-                    print("Resolving child " + str(child) + " with status " + child._status + " and special " + child._special)
+                    print(("Resolving child " + str(child) + " with status " + child._status + " and special " + child._special))
                 if child._special == 'remove':      # anything else here was after the remove
                     self._updateRecurse(chain, 'remove', {}, privateMap)
                     if child._status == 'stable':    # must have been re-added subsequently
@@ -1145,8 +1145,8 @@ class _UpdateManager:
         def _updateRecurse(self, chain, style, properties={}, parentMap=None):
             """Note that parentMap need only be sent when style is 'remove'."""
             if _debug >= 3:
-                print('_UpdateManager._node._updateRecurse called with\n    ' + '\n    '.join([str(x) for x in (self,chain,style,properties)]))
-                print('  Node is currently ' + ('frozen' if self.isFrozen() else 'unfrozen'))
+                print(('_UpdateManager._node._updateRecurse called with\n    ' + '\n    '.join([str(x) for x in (self,chain,style,properties)])))
+                print(('  Node is currently ' + ('frozen' if self.isFrozen() else 'unfrozen')))
     
             if self._chain == chain:
                 # exact match;  make the changes
@@ -1174,7 +1174,7 @@ class _UpdateManager:
                         before.value()._updateRecurse(chain, style, properties, children)
                         return
                     else:
-                        after = before.next()
+                        after = next(before)
                 else:
                     after = children.first()
 
@@ -1183,10 +1183,10 @@ class _UpdateManager:
                 # new child, then recurse (on what will be base case)
                 child = _UpdateManager._node(chain)
                 if _debug >= 2.5:
-                    print("created new _UpdateManager._node: " + str(child) + " for chain " + str(chain))
+                    print(("created new _UpdateManager._node: " + str(child) + " for chain " + str(chain)))
                 while after is not None and after.key()[:len(chain)] == chain:
                     relocate = after
-                    after = relocate.next()
+                    after = next(relocate)
                     child._publicChildren[relocate.key()] = relocate.value()  # reinsert under new node (always public)
                     children.remove(relocate)                                 # and remove from current level
                 children[chain] = child                                       # add child
@@ -1194,8 +1194,8 @@ class _UpdateManager:
 
         def _flushRecurse(self, parentMap=None):
           if _debug >= 3:
-              print('_flushRecurse called on node ' + str(self))
-              print('isFrozen currently' + str(self.isFrozen()))
+              print(('_flushRecurse called on node ' + str(self)))
+              print(('isFrozen currently' + str(self.isFrozen())))
     
           if self._status != 'stable' or len(self._publicUpdates) > 0:
               # this node needs to be added/removed or has properties to push
@@ -1236,8 +1236,8 @@ class _UpdateManager:
         Empty dicitonary should be used for remove/freeze/unfreeze.
         """
         if _debug >= 1:
-            print('\n_UpdateManager.update called with\n    ' + '\n    '.join([str(x) for x in (chain,style,properties)]))
-            if not isinstance(style, basestring):
+            print(('\n_UpdateManager.update called with\n    ' + '\n    '.join([str(x) for x in (chain,style,properties)])))
+            if not isinstance(style, str):
                 raise TypeError('style should be a string')
             if style not in ('add', 'remove', 'freeze', 'unfreeze', 'update'):
                 raise ValueError('invalud style designator: ' + str(statusFlags))
@@ -1348,7 +1348,7 @@ class _GraphicsManager:
 
         if self._state != 'Failed':
           if _debug >= 1:
-              print('addCommandToQueue: ' + str(command))
+              print(('addCommandToQueue: ' + str(command)))
           self._commandQueue.put(command)
 
     def _closeAll(self):
@@ -1390,7 +1390,7 @@ class _GraphicsManager:
     def processCommand(self, command):
         if _debug >= 1:
             print('')
-            print('Manager executing: ' + str(command))
+            print(('Manager executing: ' + str(command)))
 
         # Rendering
         if command[0] == 'push updates':
@@ -1422,7 +1422,7 @@ class _GraphicsManager:
             containerTuple = command[1]
             drawableTuple = command[2]
             if _debug >= 1:
-                print('_middleHierarchy.addLink: ' + str(containerTuple) + ' ' + str(drawableTuple))
+                print(('_middleHierarchy.addLink: ' + str(containerTuple) + ' ' + str(drawableTuple)))
             self._middleHierarchy.addLink(containerTuple, drawableTuple)
 
             downwardChains = self._middleHierarchy.computeDownwardChains(drawableTuple)
@@ -1441,8 +1441,8 @@ class _GraphicsManager:
                     tc = tuple(u + d) 
 
                     if _debug >= 1.5:
-                        print('\nAdding chain to updateManager: ' + repr(tc))
-                        print("Effective depth " + str(properties['depth']))
+                        print(('\nAdding chain to updateManager: ' + repr(tc)))
+                        print(("Effective depth " + str(properties['depth'])))
 
                     self._updateManager.update(tc, 'add', properties)   
                     if isFrozen:
@@ -1455,7 +1455,7 @@ class _GraphicsManager:
                 c.append( child )
                 self._updateManager.update(tuple(c), 'remove')
             if _debug >= 1:
-                print('_middleHierarchy.removeLink: ' + str(parent) + ' ' + str(child))
+                print(('_middleHierarchy.removeLink: ' + str(parent) + ' ' + str(child)))
             self._middleHierarchy.removeLink(parent,child)
             
         # Drawables
@@ -1468,7 +1468,7 @@ class _GraphicsManager:
                         childTuple = chain[-1]
                         command[2]['depth'] = self.serializeDepth(command[2]['depth'], parentTuple, childTuple)
                         if _debug >= 1:
-                            print('Updating Effective Depth: %s' % str(command[2]['depth']))
+                            print(('Updating Effective Depth: %s' % str(command[2]['depth'])))
                     self._updateManager.update(tuple(chain), 'update', command[2])
                 
         elif command[0] == 'load image':
@@ -1507,9 +1507,9 @@ class _GraphicsManager:
             print("_pushUpdates called")
         for (chain, status, properties) in self._updateManager.flush():
             if _debug >= 1:
-                print('_pushUpdates: ' + str(status)+' '+str(chain)+' '+str(properties))
+                print(('_pushUpdates: ' + str(status)+' '+str(chain)+' '+str(properties)))
                 if self._renderedHierarchy.hasChain(chain):
-                    print('    Rendered Depth is ' + str(self._renderedHierarchy.getNode(chain)._depth))
+                    print(('    Rendered Depth is ' + str(self._renderedHierarchy.getNode(chain)._depth)))
 
             if status == 'add':
                 assert not self._renderedHierarchy.hasChain(chain)
@@ -1520,10 +1520,10 @@ class _GraphicsManager:
                     while node is not None and node._renderedDrawable is None:
                         node = node._next
                     if node is not None and node._chain[0] == chain[0]:  # TODO: correct treatment of forest???
-                        if _debug >= 1: print('Putting '+str(current._renderedDrawable)+' above '+str(node._renderedDrawable))
+                        if _debug >= 1: print(('Putting '+str(current._renderedDrawable)+' above '+str(node._renderedDrawable)))
                         current._renderedDrawable.putAbove(node._renderedDrawable)
                     else:
-                        if _debug >= 1: print('Putting '+str(current._renderedDrawable)+' at bottom')
+                        if _debug >= 1: print(('Putting '+str(current._renderedDrawable)+' at bottom'))
                         current._renderedDrawable.putAbove(None)
 
             elif status == 'remove':
@@ -1548,7 +1548,7 @@ class _GraphicsManager:
                 if 'depth' in properties:
                     (first, last) = self._renderedHierarchy.changeDepth(chain, properties['depth'])
                     if first is not None:   # something changed
-                        if _debug >= 1.5: print('first, last = '+str( (first._renderedDrawable,last._renderedDrawable) ))
+                        if _debug >= 1.5: print(('first, last = '+str( (first._renderedDrawable,last._renderedDrawable) )))
 
                         # first goal is finding an adequate anchor below this group
                         below = last._next
@@ -1561,11 +1561,11 @@ class _GraphicsManager:
                             if current._renderedDrawable is not None:
                                 if below is not None:
                                     if _debug >= 1.5:
-                                        print('Putting '+str(current._renderedDrawable)+' above '+str(below._renderedDrawable))
+                                        print(('Putting '+str(current._renderedDrawable)+' above '+str(below._renderedDrawable)))
                                     current._renderedDrawable.putAbove(below._renderedDrawable)
                                 else:
                                     if _debug >= 1.5:
-                                        print('Putting ' + str(current._renderedDrawable) +  ' at bottom')
+                                        print(('Putting ' + str(current._renderedDrawable) +  ' at bottom'))
                                     current._renderedDrawable.putAbove(None)
                                 below = current
                             current = current._prev
@@ -2338,7 +2338,7 @@ class Color(object):
         # is using color as both fill and border is registered twice.
         self._users = set()
 
-        if isinstance(colorChoice, basestring):
+        if isinstance(colorChoice, str):
             try:
                 self.setByName(colorChoice)
             except ValueError:
@@ -2368,7 +2368,7 @@ class Color(object):
                     ('Transparent' designates the lack of color)
 
         """
-        if not isinstance(colorName, basestring):
+        if not isinstance(colorName, str):
             raise TypeError('string expected as color name')
         cleanName = colorName.lower().replace(' ','')
         if cleanName == 'transparent':
@@ -2497,7 +2497,7 @@ class _GraphicsContainer(object):
             _graphicsManager.beginRefresh()
             childTuple = _graphicsManager._frontHierarchy.findChildTuple((self,cls), drawable)
             if _debug >= 1:
-                print('_frontHierarchy.removeLink: ' + str( (self,cls) ) + ' ' + str(childTuple))
+                print(('_frontHierarchy.removeLink: ' + str( (self,cls) ) + ' ' + str(childTuple)))
             _graphicsManager._frontHierarchy.removeLink((self,cls), childTuple)
             _graphicsManager.addCommandToQueue(('object removed', (self,cls), childTuple))
             _graphicsManager.completeRefresh()
@@ -2534,7 +2534,7 @@ class _GraphicsContainer(object):
         return sorted(self._contents, key=Drawable.getDepth, reverse=True)
 
 def _wrapUtility(cls):
-    if _debug >= 2: print('_wrapUtility being called on class ' + str(cls))
+    if _debug >= 2: print(('_wrapUtility being called on class ' + str(cls)))
     classDict = cls.__dict__
     if '_internalDraw' not in classDict:   # not alreadly wrapped
         if '_draw' in classDict:
@@ -2546,7 +2546,7 @@ def _wrapUtility(cls):
             # defining closure to wrap the original _draw while identifying proper class
             def drawClosure(self):
                 # Note: cls and internalDraw taken from the closure
-                if _debug >= 2: print(str(cls) + ' draw wrapper called on ' + str(self))
+                if _debug >= 2: print((str(cls) + ' draw wrapper called on ' + str(self)))
                 parent = _graphicsManager._drawParent
                 if not parent:
                     raise GraphicsError('_draw should not be directly called', True)
@@ -2557,7 +2557,7 @@ def _wrapUtility(cls):
         
                 known = self in _graphicsManager._frontHierarchy        # query this before adding to hierarchy
                 if _debug >= 1:
-                    print('\n_frontHierarchy.addLink: ' + str(parent) + ' ' + str( (self,cls) ))
+                    print(('\n_frontHierarchy.addLink: ' + str(parent) + ' ' + str( (self,cls) )))
 
                 _graphicsManager._frontHierarchy.addLink(parent, (self,cls))
                 if not known:
@@ -2565,12 +2565,12 @@ def _wrapUtility(cls):
                 _graphicsManager.addCommandToQueue(('object added', parent, (self,cls)))
         
                 if not known:
-                    if _debug >= 2: print('about to call original _draw() for ' + str(self))
+                    if _debug >= 2: print(('about to call original _draw() for ' + str(self)))
                     _graphicsManager._drawParent = (self,cls)
                     internalDraw(self)           # the original wrapped function, taken from closure
                     _graphicsManager._drawParent = parent
             
-                if _debug >= 2: print('draw wrapper call ending for ' + str(self))
+                if _debug >= 2: print(('draw wrapper call ending for ' + str(self)))
             # end of closure
             #---------------------------------------------------------------------------
             setattr(cls, '_draw', drawClosure)
@@ -2612,7 +2612,7 @@ class Drawable(_EventTrigger):
         # Subtypes can customize as needed.
         temp = self.__class__.__new__(self.__class__)
         memo[id(self)] = temp
-        for k,v in self.__dict__.items():
+        for k,v in list(self.__dict__.items()):
             temp.__dict__[k] = _copy.deepcopy(v, memo)
         return temp
 
@@ -3061,7 +3061,7 @@ class Canvas(_GraphicsContainer, _EventTrigger):
             raise TypeError('width must be numeric')
         if not isinstance(h, (int,float)):
             raise TypeError('height must be numeric')
-        if not isinstance(title, basestring):
+        if not isinstance(title, str):
             raise TypeError('title must be a string')
         if not isinstance(autoRefresh, bool):
             raise TypeError('autoRefresh flag must be a boolean value')
@@ -3212,7 +3212,7 @@ class Canvas(_GraphicsContainer, _EventTrigger):
 
     def setTitle(self, title):
         """Set the title for the canvas window to given string."""
-        if not isinstance(title, basestring):
+        if not isinstance(title, str):
             raise TypeError('title must be a string')
         self._title = title
         self._update( {'title' : title } )
@@ -3254,7 +3254,7 @@ class Canvas(_GraphicsContainer, _EventTrigger):
         except AttributeError:
             raise Exception('child class of Drawable must provide a _draw method')
 
-        if _debug >= 1: print('\nCall to Canvas.add with self='+str(self)+' drawable='+str(drawable))
+        if _debug >= 1: print(('\nCall to Canvas.add with self='+str(self)+' drawable='+str(drawable)))
         _GraphicsContainer.add(self, drawable)
         
     def remove(self, drawable):
@@ -3534,7 +3534,7 @@ class Layer(Drawable, _GraphicsContainer):
         
     def add(self, drawable):
         """Add the Drawable object to the layer."""
-        if _debug >= 1: print('\nCall to Layer.add with self='+str(self)+' drawable='+str(drawable))
+        if _debug >= 1: print(('\nCall to Layer.add with self='+str(self)+' drawable='+str(drawable)))
         if self._final:
             raise Exception('cannot add objects once finalized')
         if not isinstance(drawable, Drawable):
@@ -4060,7 +4060,7 @@ class Text(Drawable):
         this style can be changed by the setJustification method.
 
         """
-        if not isinstance(message, basestring):
+        if not isinstance(message, str):
             raise TypeError('message must be a string')
         if not isinstance(fontsize, (int,float)):
             raise TypeError('fontsize must be numeric')
@@ -4098,7 +4098,7 @@ class Text(Drawable):
         message  a string
 
         """
-        if not isinstance(message, basestring):
+        if not isinstance(message, str):
             raise TypeError('message must be a string')
         self._text = message
         self._update({'message': message})
@@ -4190,7 +4190,7 @@ class Text(Drawable):
 
         By default, text is center justified.
         """
-        if not isinstance(style, basestring):
+        if not isinstance(style, str):
             raise TypeError('style must be a string')
         if style not in ('left', 'right', 'center'):
             raise ValueError("style must be 'left', 'right', or 'center'")
@@ -4246,7 +4246,7 @@ class Image(Drawable):
         
         if len(args) == 1:
             # TODO:  add back in base64 encoded strings for initialization? (from KAIST)
-            if not isinstance(args[0], basestring):
+            if not isinstance(args[0], str):
                 raise TypeError('filename must be a string')
 
             result = _graphicsManager.executeFunction( ('load image', args[0]) )

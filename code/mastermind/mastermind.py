@@ -33,12 +33,12 @@ def check_guess(guess):
 
 def get_guess():
   while True:
-    guess = raw_input("Enter your guess> ")
+    guess = input("Enter your guess> ")
     guess = guess.strip().upper().replace(" ", "")
     err = check_guess(guess)
     if not err:
       return guess
-    print err
+    print(err)
 
 def evaluate_guess(secret, guess):
   """Return (pos, let) where pos is the number of correct letters in the 
@@ -58,27 +58,27 @@ def show_history(h, secret):
   for guess in h:
     pos, let = evaluate_guess(secret, guess)
     count += 1
-    print "%2d: %s : %d positions, %d letters" % (count, guess, pos, let)
+    print("%2d: %s : %d positions, %d letters" % (count, guess, pos, let))
   
 def main():    
   secret = create_secret()
   history = []
-  print "Welcome to Mastermind!"
-  print "I have created a secret combination:",
-  print "Four distinct letters from A - F."
-  print "You have %d guesses to find it." % max_num_guesses
+  print("Welcome to Mastermind!")
+  print("I have created a secret combination:", end=' ')
+  print("Four distinct letters from A - F.")
+  print("You have %d guesses to find it." % max_num_guesses)
   while True:
     show_history(history, secret)
     if len(history) == max_num_guesses:
-      print ("My secret was %s, you failed to find it in %d guesses!" %
-             (secret, len(history)))
+      print(("My secret was %s, you failed to find it in %d guesses!" %
+             (secret, len(history))))
       return
     guess = get_guess()
     history.append(guess)
     pos, let = evaluate_guess(secret, guess)
     if pos == 4:
-      print ("My secret was %s, you guessed correctly in %d guesses!" % 
-             (secret, len(history)))
+      print(("My secret was %s, you guessed correctly in %d guesses!" % 
+             (secret, len(history))))
       return
 
 main()

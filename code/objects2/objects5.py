@@ -1,7 +1,7 @@
 
 import random
 
-FACES = range(2, 11) + ['Jack', 'Queen', 'King', 'Ace' ]
+FACES = list(range(2, 11)) + ['Jack', 'Queen', 'King', 'Ace' ]
 SUITS = [ 'Clubs', 'Diamonds', 'Hearts', 'Spades' ]
 
 class Card(object):
@@ -58,10 +58,10 @@ for i in range(num_cards):
   for j in range(num_players):
     card = deck.draw() 
     hands[j].append(card)
-    print "Player", j+1, "draws", card
+    print("Player", j+1, "draws", card)
 
 for j in range(num_players):
-  print "Player %d's hand (value %d):" % (j+1, hand_value(hands[j]))
+  print("Player %d's hand (value %d):" % (j+1, hand_value(hands[j])))
   for card in hands[j]:
-    print " ", card
+    print(" ", card)
 

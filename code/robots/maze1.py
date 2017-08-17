@@ -35,6 +35,6 @@ def follow_right_wall():
 mark_starting_point_and_move()
             
 finished = hubo.on_beeper
-print type(finished)
+print(type(finished))
 while not finished():
   follow_right_wall()

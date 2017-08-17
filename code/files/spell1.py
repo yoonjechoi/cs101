@@ -12,13 +12,13 @@ def read_words():
 def main():
   words = read_words()
   while True:
-    w = raw_input("Enter a word> ")
+    w = input("Enter a word> ")
     w = w.strip()
     if w == "":
       break
     if w in words:
-      print "%s is a word" % w
+      print("%s is a word" % w)
     else:
-      print "Spelling error: %s is not a word!" % w
+      print("Spelling error: %s is not a word!" % w)
 
 main()

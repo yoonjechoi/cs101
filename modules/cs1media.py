@@ -15,9 +15,9 @@ import sys as _sys
 import Image as _Image
 import ImageTk as _ImageTk
 import easygui as _easygui
-import tkColorChooser as _tkColorChooser
-import tkFont as _tkFont
-import Tkinter as _Tk
+import tkinter.colorchooser as _tkColorChooser
+import tkinter.font as _tkFont
+import tkinter as _Tk
 
 # --------------------------------------------------------------------
 

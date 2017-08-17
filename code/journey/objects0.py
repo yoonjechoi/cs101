@@ -14,5 +14,5 @@ card = ("Ace", "Spades", 11)
 
 hand = [ card ]
 
-print card_string(card), "has value", card[2]
-print "Hand has value", hand_value(hand)
+print(card_string(card), "has value", card[2])
+print("Hand has value", hand_value(hand))

@@ -12,7 +12,7 @@ pending = [ False, False, False, False ]
 
 # possible states
 (WAIT1, WAIT2, WAIT3, MOVE12, MOVE21, MOVE23, MOVE32, 
- OPEN1, OPEN2UP, OPEN2DOWN, OPEN3) = range(11)
+ OPEN1, OPEN2UP, OPEN2DOWN, OPEN3) = list(range(11))
 
 # current state
 state = WAIT1

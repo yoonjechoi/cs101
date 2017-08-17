@@ -7,4 +7,4 @@ for line in f:
   if planet == "earth":
     break
 
-print "Earth is planet #%d" % earth
+print("Earth is planet #%d" % earth)

@@ -10,7 +10,7 @@ max_y = 2000
 y_step = 0.5
 
 # We have data from 1994 to 2009
-years = range(1994, 2010)
+years = list(range(1994, 2010))
 
 # read one year and return list
 def read_year(yr):

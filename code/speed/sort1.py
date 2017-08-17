@@ -7,8 +7,8 @@ def sort(a):
       if a[j] > a[j+1]:
         a[j], a[j+1] = a[j+1], a[j]
   
-a = range(1, 2001)
+a = list(range(1, 2001))
 random.shuffle(a)
-print a[:100]
+print(a[:100])
 sort(a)
-print a[:100]
+print(a[:100])

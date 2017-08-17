@@ -32,8 +32,8 @@ def sort(a):
   sort(a2)
   merge(a, a1, a2)
   
-a = range(1, 2001)
+a = list(range(1, 2001))
 random.shuffle(a)
-print a[:100]
+print(a[:100])
 sort(a)
-print a[:100]
+print(a[:100])

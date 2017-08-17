@@ -3,7 +3,7 @@
 #
 
 # We have data from 1994 to 2009
-years = range(1994, 2010)
+years = list(range(1994, 2010))
 
 # read one year and return list
 def read_year(yr):
@@ -39,10 +39,10 @@ def find_minmax(yr):
 
 def main():
   for yr in years:
-    print "%4d:" % yr,
+    print("%4d:" % yr, end=' ')
     minmax = find_minmax(yr)
     for m in range(12):
-      print "%4d/%-4d" % minmax[m],
-    print
+      print("%4d/%-4d" % minmax[m], end=' ')
+    print()
 
 main()

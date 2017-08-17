@@ -4,7 +4,7 @@
 
 import random
 
-FACES = range(2, 11) + ['Jack', 'Queen', 'King', 'Ace' ]
+FACES = list(range(2, 11)) + ['Jack', 'Queen', 'King', 'Ace' ]
 SUITS = [ 'Clubs', 'Diamonds', 'Hearts', 'Spades' ]
 
 class Card(object):
@@ -59,14 +59,14 @@ def ask_yesno(prompt):
   """
   
   while True :
-    user_input = raw_input(prompt)
+    user_input = input(prompt)
     
     if user_input == "y" :
       return True
     elif user_input == "n" :
       return False
     else :
-      print "I beg your pardon!"
+      print("I beg your pardon!")
       
 def blackjack():
   """Play one round of Blackjack.
@@ -79,14 +79,14 @@ def blackjack():
     
   # initial two cards
   player.append(deck.draw())
-  print "You are dealt", player[0]
+  print("You are dealt", player[0])
   dealer.append(deck.draw())
-  print "Dealer is dealt a hidden card"
+  print("Dealer is dealt a hidden card")
   player.append(deck.draw())
-  print "You are dealt", player[1]
+  print("You are dealt", player[1])
   dealer.append(deck.draw())
-  print "Dealer is dealt", dealer[1]
-  print "Your total is", hand_value(player)
+  print("Dealer is dealt", dealer[1])
+  print("Your total is", hand_value(player))
 
   # player's turn to draw cards
   while hand_value(player) < 21:
@@ -94,46 +94,46 @@ def blackjack():
       break
     
     player.append(deck.draw())
-    print "You are dealt", player[-1]
-    print "Your total is", hand_value(player)
+    print("You are dealt", player[-1])
+    print("Your total is", hand_value(player))
   
   # if the player's score is over 21, the player loses immediately.
   if hand_value(player) > 21:
-    print "You went over 21! You lost!"
+    print("You went over 21! You lost!")
     return -1
 
-  print "The dealer's hidden card was", dealer[0]
+  print("The dealer's hidden card was", dealer[0])
   while hand_value(dealer) < 17:
     dealer.append(deck.draw())
-    print "Dealer is dealt", dealer[-1]
+    print("Dealer is dealt", dealer[-1])
 
-  print "The dealer's total is", hand_value(dealer)
+  print("The dealer's total is", hand_value(dealer))
   
   # summary
   player_total = hand_value(player)
   dealer_total = hand_value(dealer)
-  print "\nYour total is", player_total
-  print "The dealer's total is", dealer_total
+  print("\nYour total is", player_total)
+  print("The dealer's total is", dealer_total)
 
   if dealer_total > 21:
-    print "The dealer went over 21! You win!"
+    print("The dealer went over 21! You win!")
     return 1
 
   if player_total > dealer_total:
-    print "You win!"
+    print("You win!")
     return 1
 
   if player_total < dealer_total:
-    print "You lost!"
+    print("You lost!")
     return -1
 
-  print "You have a tie!"
+  print("You have a tie!")
   return 0
 
 def game_loop():
-  print "Welcome to Blackjack 101!"    
+  print("Welcome to Blackjack 101!")    
   while True:
-    print
+    print()
     blackjack()    
     if not ask_yesno("\nPlay another round? (y/n) "):
       break    
