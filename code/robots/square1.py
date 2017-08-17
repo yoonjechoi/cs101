@@ -1,6 +1,7 @@
 from cs1robots import *
+
 create_world()
-hubo = Robot(orientation = "N")
+hubo = Robot(orientation="N")
 hubo.set_trace("blue")
 hubo.move()
 # make a right turn

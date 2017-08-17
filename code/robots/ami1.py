@@ -13,5 +13,5 @@ ami.move()
 hubo.move()
 
 for i in range(8):
-  hubo.move()
-  ami.move()
+    hubo.move()
+    ami.move()

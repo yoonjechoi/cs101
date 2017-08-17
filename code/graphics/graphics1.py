@@ -35,7 +35,7 @@ r.scale(0.5)
 canvas.wait()
 
 for i in range(80):
-  sq.scale(0.95)
+    sq.scale(0.95)
 canvas.remove(sq)
 
 canvas.wait()
